@@ -99,12 +99,12 @@ def main():
     (normalized_size, normalized_rooms,
      normalized_price) = normalize_features(size, rooms, price)
 
-    # plot_graph(normalized_size, normalized_price, '2.1 - Distribuição de preços por tamanho normalizado',
-    #            'Tamanho', 'Preço')
-    # plot_graph(normalized_rooms, normalized_price, '2.1 - Distribuição de preços por numero de quartos normalizado',
-    #            'Quartos', 'Preço')
-    # plot_graph(normalized_size, normalized_rooms, '2.1 - Distribuição de tamanhos por numero de quartos normalizado',
-    #            'Tamanho', 'Quartos')
+    plot_graph(normalized_size, normalized_price, '2.1 - Distribuição de preços por tamanho normalizado',
+               'Tamanho', 'Preço')
+    plot_graph(normalized_rooms, normalized_price, '2.1 - Distribuição de preços por numero de quartos normalizado',
+               'Quartos', 'Preço')
+    plot_graph(normalized_size, normalized_rooms, '2.1 - Distribuição de tamanhos por numero de quartos normalizado',
+               'Tamanho', 'Quartos')
 
     (normalized_features, normalized_targets) = getParameters(
         normalized_size, normalized_rooms, normalized_price)
