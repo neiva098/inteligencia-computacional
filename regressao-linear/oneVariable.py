@@ -8,7 +8,7 @@ ALPHA = 0.01
 
 def readFile():
     data = loadtxt(
-        '/mnt/86BA2343BA232F5D/ERE/8-periodo/IC/tarefas/inteligencia-computacional/regressao-linear/data1.txt', delimiter=',')
+        'data1.txt', delimiter=',')
 
     x = data[:, 0]
     y = data[:, 1]
@@ -63,7 +63,7 @@ def main():
     theta, costHistory = gradientDescent(
         features, targets, initializeTheta(), ALPHA, ITERATIONS)
 
-    title ('1.3 - Custo / iteração')
+    title('1.3 - Custo / iteração')
     xlabel('Iteração')
     ylabel('Custo')
     plot(costHistory)
@@ -72,10 +72,12 @@ def main():
     results = features.dot(theta).flatten()
 
     scatter(x, y, marker='x', c='r')
-    title ('1.3 - Gradiente descendente')
+    title('1.3 - Gradiente descendente')
     xlabel('População em 10.000')
     ylabel('Lucro em R$10,000')
     plot(x, results)
     show()
 
-main()
+
+if __name__ == '__main__':
+    main()
