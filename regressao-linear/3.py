@@ -1,4 +1,7 @@
-from numpy import loadtxt, zeros, ones, arange
+import pandas as pd
+
+from numpy import loadtxt, zeros, ones, transpose, dot, linalg
+from numpy.core.defchararray import array
 from numpy.lib.function_base import average
 from pylab import scatter, show, title, xlabel, ylabel, plot
 from statistics import stdev
@@ -15,14 +18,6 @@ def readFile():
     price = data[:, 2]
 
     return (size, rooms, price)
-
-
-def plot_graph(x, y, label_title, x_label, y_label):
-    scatter(x, y, marker='X', c='r')
-    title(label_title)
-    xlabel(x_label)
-    ylabel(y_label)
-    show()
 
 
 def feature_normalization(feature):
@@ -80,30 +75,20 @@ def gradientDescent(x, y, theta, alpha, iterations):
     return theta, costHistory
 
 
+def calcEqNormalTheta():
+    data2_en = pd.read_csv("data2.txt", names=["t", "x", "y"])
+
+    data2_en["x0"] = [1 for i in range(0, len(data2_en["t"]))]
+
+    x = data2_en[["x0", "t", "x"]].to_numpy()
+    y = data2_en[["y"]].to_numpy()
+    xt = transpose(x)
+
+    return dot(dot(linalg.inv(dot(xt, x)), xt), y)
+
+
 def main():
-    (size, rooms, price) = readFile()
-
-    (normalized_size, normalized_rooms,
-     normalized_price) = normalize_features(size, rooms, price)
-
-    plot_graph(normalized_size, normalized_price, '2.1 - Distribuição de preços por tamanho normalizado',
-               'Tamanho', 'Preço')
-    plot_graph(normalized_rooms, normalized_price, '2.1 - Distribuição de preços por numero de quartos normalizado',
-               'Quartos', 'Preço')
-    plot_graph(normalized_size, normalized_rooms, '2.1 - Distribuição de tamanhos por numero de quartos normalizado',
-               'Tamanho', 'Quartos')
-
-    (features, targets) = getParameters(
-        normalized_size, normalized_rooms, normalized_price)
-    theta, costHistory = gradientDescent(
-        features, targets, initializeTheta(), ALPHA, ITERATIONS)
-
-    title('2.3 - Custo / iteração')
-    xlabel('Iteração')
-    ylabel('Custo')
-    plot(arange(ITERATIONS), costHistory)
-    show()
+    thetaNormal = calcEqNormalTheta()
 
 
-if __name__ == '__main__':
-    main()
+main()

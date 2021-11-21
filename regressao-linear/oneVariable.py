@@ -1,5 +1,4 @@
-from numpy import loadtxt, zeros, ones
-from numpy.core.defchararray import array
+from numpy import loadtxt, zeros, ones, arange
 from pylab import scatter, show, title, xlabel, ylabel, plot
 
 ITERATIONS = 2000
@@ -66,7 +65,7 @@ def main():
     title('1.3 - Custo / iteração')
     xlabel('Iteração')
     ylabel('Custo')
-    plot(costHistory)
+    plot(arange(ITERATIONS), costHistory)
     show()
 
     results = features.dot(theta).flatten()
