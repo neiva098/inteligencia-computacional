@@ -1,9 +1,7 @@
 import pandas as pd
 
 from numpy import loadtxt, zeros, ones, transpose, dot, linalg
-from numpy.core.defchararray import array
 from numpy.lib.function_base import average
-from pylab import scatter, show, title, xlabel, ylabel, plot
 from statistics import stdev
 
 ITERATIONS = 2000
