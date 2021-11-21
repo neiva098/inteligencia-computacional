@@ -1,9 +1,14 @@
-from numpy import loadtxt, zeros, ones, arange
+from numpy import loadtxt, zeros, ones, arange, matmul
+from numpy.linalg import inv
+from numpy.core.fromnumeric import transpose
 from numpy.lib.function_base import average
 from pylab import scatter, show, title, xlabel, ylabel, plot
+from matplotlib import pyplot as plt
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 from statistics import stdev
 
-ITERATIONS = 2000
+ITERATIONS = 1000
 ALPHA = 0.001
 
 
@@ -80,29 +85,62 @@ def gradientDescent(x, y, theta, alpha, iterations):
     return theta, costHistory
 
 
+def normal_equation(features, targets):
+    transposed_features = transpose(features)
+    aux = inv(matmul(transposed_features, features))
+    theta = matmul(matmul(aux, transposed_features), targets)
+
+    return theta
+
+
 def main():
     (size, rooms, price) = readFile()
 
     (normalized_size, normalized_rooms,
      normalized_price) = normalize_features(size, rooms, price)
 
-    plot_graph(normalized_size, normalized_price, '2.1 - Distribuição de preços por tamanho normalizado',
-               'Tamanho', 'Preço')
-    plot_graph(normalized_rooms, normalized_price, '2.1 - Distribuição de preços por numero de quartos normalizado',
-               'Quartos', 'Preço')
-    plot_graph(normalized_size, normalized_rooms, '2.1 - Distribuição de tamanhos por numero de quartos normalizado',
-               'Tamanho', 'Quartos')
+    # plot_graph(normalized_size, normalized_price, '2.1 - Distribuição de preços por tamanho normalizado',
+    #            'Tamanho', 'Preço')
+    # plot_graph(normalized_rooms, normalized_price, '2.1 - Distribuição de preços por numero de quartos normalizado',
+    #            'Quartos', 'Preço')
+    # plot_graph(normalized_size, normalized_rooms, '2.1 - Distribuição de tamanhos por numero de quartos normalizado',
+    #            'Tamanho', 'Quartos')
 
-    (features, targets) = getParameters(
+    (normalized_features, normalized_targets) = getParameters(
         normalized_size, normalized_rooms, normalized_price)
-    theta, costHistory = gradientDescent(
-        features, targets, initializeTheta(), ALPHA, ITERATIONS)
+    gradient_theta, cost_history = gradientDescent(
+        normalized_features, normalized_targets, initializeTheta(), ALPHA, ITERATIONS)
 
-    title('2.3 - Custo / iteração')
+    title('2.2 - Custo / iteração')
     xlabel('Iteração')
     ylabel('Custo')
-    plot(arange(ITERATIONS), costHistory)
+    plot(arange(ITERATIONS), cost_history)
     show()
+
+    (features, targets) = getParameters(size, rooms, price)
+    normal_theta = normal_equation(features, targets)
+
+    normal_results = features.dot(normal_theta).flatten()
+    gradient_results = features.dot(gradient_theta).flatten()
+
+    rms_normal = sqrt(mean_squared_error(targets, normal_results))
+    print('Normal Error: ', rms_normal)
+    rms_gradient = sqrt(mean_squared_error(targets, gradient_results))
+    print('Gradient Error: ', rms_gradient)
+
+    plt.ylim(0, 200)
+    scatter(targets, calculate_error(normal_results, targets),
+             marker='x', c='r')
+    scatter(targets,calculate_error(gradient_results, targets),
+             marker='o', c='b')
+    title('3 - Erros x Preço')
+    xlabel('Preço')
+    ylabel('Erro (%)')
+    show()
+
+
+def calculate_error(pred, target):
+    return (abs(pred - target)/abs(target)) * 100
 
 
 if __name__ == '__main__':
